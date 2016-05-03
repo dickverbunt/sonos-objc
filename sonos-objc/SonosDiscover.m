@@ -10,6 +10,15 @@
 #import "XMLReader.h"
 #import "SonosController.h"
 
+
+NSString * const kSonosDiscoverSonosName = @"name";
+NSString * const kSonosDiscoverSonosCoordinator = @"coordinator";
+NSString * const kSonosDiscoverSonosGroup = @"group";
+NSString * const kSonosDiscoverSonosIp = @"ip";
+NSString * const kSonosDiscoverSonosPort = @"port";
+NSString * const kSonosDiscoverSonosUUID = @"uuid";
+
+
 typedef void (^findDevicesBlock)(NSArray *ipAddresses);
 
 @interface SonosDiscover ()
@@ -48,11 +57,17 @@ typedef void (^findDevicesBlock)(NSArray *ipAddresses);
                             NSString *coordinator = dictionary[@"coordinator"];
                             NSString *uuid = dictionary[@"uuid"];
                             NSString *group = dictionary[@"group"];
-                            NSString *ip = [[dictionary[@"location"] stringByReplacingOccurrencesOfString:@"http://" withString:@""] stringByReplacingOccurrencesOfString:@"/xml/device_description.xml" withString:@""];
-                            NSArray *location = [ip componentsSeparatedByString:@":"];
-                            SonosController *controllerObject = [[SonosController alloc] initWithIP:[location objectAtIndex:0] port:[[location objectAtIndex:1] intValue]];
-                            
-                            [devices addObject:@{@"ip": [location objectAtIndex:0], @"port" : [location objectAtIndex:1], @"name": name, @"coordinator": [NSNumber numberWithBool:[coordinator isEqualToString:@"true"] ? YES : NO], @"uuid": uuid, @"group": group, @"controller": controllerObject}];
+                            NSURL *url = [NSURL URLWithString:dictionary[@"location"]];
+							
+							NSDictionary *sonosDictionary = @{
+															  kSonosDiscoverSonosName: name,
+															  kSonosDiscoverSonosCoordinator: @([coordinator isEqualToString:@"true"]),
+															  kSonosDiscoverSonosIp: url.host,
+															  kSonosDiscoverSonosPort: url.port,
+															  kSonosDiscoverSonosGroup: group,
+															  kSonosDiscoverSonosUUID: uuid,
+															  };
+                            [devices addObject:sonosDictionary];
                             
                         }
                         NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];

@@ -29,6 +29,15 @@
 #import <Foundation/Foundation.h>
 #import <CocoaAsyncSocket/GCDAsyncUdpSocket.h>
 
+
+extern NSString * const kSonosDiscoverSonosName;
+extern NSString * const kSonosDiscoverSonosCoordinator;
+extern NSString * const kSonosDiscoverSonosGroup;
+extern NSString * const kSonosDiscoverSonosIp;
+extern NSString * const kSonosDiscoverSonosPort;
+extern NSString * const kSonosDiscoverSonosUUID;
+
+
 @interface SonosDiscover : NSObject <GCDAsyncUdpSocketDelegate>
 
 + (void)discoverControllers:(void (^)(NSArray *, NSError *))completion;
